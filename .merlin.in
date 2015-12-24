@@ -1,4 +1,5 @@
 CMT %{prefix}%/build/**/_build/**
+PKG batteries
 PKG oUnit
 
 S src/**

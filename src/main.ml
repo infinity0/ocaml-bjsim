@@ -1,3 +1,3 @@
-open Hello
+open Prob
 
-let _ = hello ()
+let _ = ();;

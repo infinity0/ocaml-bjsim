@@ -1,13 +1,13 @@
 # See https://ocaml.org/learn/tutorials/setting_up_with_oasis.html for more
 OASISFormat:    0.4
 OCamlVersion:   >= 4.02.3
-Name:           hello
+Name:           bjsim
 Version:        0.1
 Maintainers:    Ximin Luo <infinity0@pwned.gg>
-Homepage:       https://github.com/infinity0/ocaml-hello
-Synopsis:       Hello World, or OCaml packaging examples.
+Homepage:       https://github.com/infinity0/bjsim-ocaml
+Synopsis:       Blackjack strategy calculator
 Authors:        Ximin Luo <infinity0@pwned.gg>
-License:        CC0
+License:        GPL-3+
 Plugins:        META (0.4), DevFiles (0.4)
 BuildTools:     ocamlbuild
 AlphaFeatures:  ocamlbuild_more_args
@@ -16,22 +16,21 @@ Description:
 
 SourceRepository master
   Type: git
-  Location: https://github.com/infinity0/ocaml-hello
+  Location: https://github.com/infinity0/bjsim-ocaml
   Branch: master
-  Browser: https://github.com/infinity0/ocaml-hello
+  Browser: https://github.com/infinity0/bjsim-ocaml
 
-Library hello
+Library bjsim
   Path: src
-  Modules: Hello
+  Modules: Prob
+  BuildDepends: batteries
 
-Executable hello
+Executable bjsim
   Path: src
   Install: true
   MainIs: main.ml
   CompiledObject: best
-# we don't need this for "hello"; just an example on how to do things
-# core needs -thread otherwise ocamlfind gives an error
-  BuildDepends: core, hello
+  BuildDepends: bjsim
   ByteOpt: -thread
   NativeOpt: -thread
 
@@ -41,7 +40,7 @@ Executable "ounit_test"
   MainIs: test.ml
   CompiledObject: best
   Install: false
-  BuildDepends: oUnit, hello
+  BuildDepends: oUnit, bjsim
 
 Test "ounit_test"
   Run$: flag(tests)
@@ -49,11 +48,12 @@ Test "ounit_test"
   Command: $ounit_test
   WorkingDirectory: test
 
-Document hello_api
+Document bjsim_api
   Type: ocamlbuild (0.4)
   BuildTools: ocamldoc
-  Title: API reference for HelloWorld
+  Title: API reference for bjsim-ocaml
   XOCamlbuildPath: .
   XOCamlbuildExtraArgs:
     "-docflags '-colorize-code -short-functors -charset utf-8'"
-  XOCamlbuildLibraries: hello
+  XOCamlbuildLibraries: bjsim
+# TODO: add links to BatInterfaces.Monad et. al.
