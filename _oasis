@@ -23,7 +23,7 @@ SourceRepository master
 Library bjsim
   Path: src
   Modules: Prob
-  BuildDepends: batteries
+  BuildDepends: batteries, sexplib.syntax, sexplib_num
 
 Executable bjsim
   Path: src

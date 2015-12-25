@@ -1,7 +1,10 @@
 open Num
 open List
+open Sexplib.Std
+open Sexplib_num.Std.Num
 
-type 'a m = ProbDist of ('a * num) list
+type 'a m = ProbDist of ('a * num) list with sexp
+
 exception Invalid_probability of num
 exception Invalid_total_probability of num
 
@@ -34,6 +37,8 @@ let dist_of_al dist =
 let al_of_dist m = match m with ProbDist(dist) -> dist
 
 let fal_of_dist m = map (fun (v, p) -> v, float_of_num(p)) (al_of_dist m)
+
+let string_of_dist sexp_of_v m = string_of_sexp (sexp_of_m sexp_of_v m)
 
 let given m pred =
   let dist = filter (fun (v, p) -> pred(v)) (al_of_dist m) in

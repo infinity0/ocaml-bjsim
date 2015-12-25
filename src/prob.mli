@@ -40,6 +40,11 @@ val al_of_dist : 'a m -> ('a * num) list
 val fal_of_dist : 'a m -> ('a * float) list
 
 (**
+ * Return a string representation of this distribution.
+ *)
+val string_of_dist : ('a -> Sexplib.Sexp.t) -> 'a m -> string
+
+(**
  * Condition this probability on the given filter predicate.
  *
  * Returns [Some (p, d)] where [p] is the proportion of [m]'s event space that
