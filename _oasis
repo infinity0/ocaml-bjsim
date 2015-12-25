@@ -54,6 +54,6 @@ Document bjsim_api
   Title: API reference for bjsim-ocaml
   XOCamlbuildPath: .
   XOCamlbuildExtraArgs:
-    "-docflags '-colorize-code -short-functors -charset utf-8'"
+    "-docflags '-colorize-code -short-functors -charset utf-8 -stars'"
   XOCamlbuildLibraries: bjsim
 # TODO: add links to BatInterfaces.Monad et. al.
