@@ -83,7 +83,7 @@ let filter pred m =
 						 (Invalid_total_probability _zero))
 
 let exists pred m = m |> al_of_dist |> List.map fst |> exists pred
-(* equiv but slower: match certain (map pred m) with Some(false) -> false | _ -> true *)
+(* equiv but slower: match certain (map pred m) with Some false -> false | _ -> true *)
 
 let for_all pred m = m |> al_of_dist |> List.map fst |> for_all pred
-(* equiv but slower: match certain (map pred m) with Some(true) -> true | _ -> false *)
+(* equiv but slower: match certain (map pred m) with Some true -> true | _ -> false *)

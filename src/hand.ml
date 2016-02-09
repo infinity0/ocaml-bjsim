@@ -6,15 +6,15 @@ let card_of_int i =
   else
 	raise (Invalid_argument (string_of_int i))
 
-let int_of_card c = match c with Card(i) -> i
+let int_of_card c = match c with Card i -> i
 
 let string_of_card c = match c with
-  | Card(1) -> "A"
-  | Card(10) -> "J"
-  | Card(i) -> string_of_int(i)
+  | Card 1 -> "A"
+  | Card 10 -> "J"
+  | Card i -> string_of_int(i)
 
 let string_of_card_opt co = match co with
-  | Some(c) -> string_of_card c
+  | Some c -> string_of_card c
   | None -> "?"
 
 let all_cards = List.map card_of_int [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
@@ -41,8 +41,8 @@ let new_hand = {
   }
 
 let cards_dealt h = match h with
-  | { snd = Some(_); _ } -> 2
-  | { fst = Some(_); _ } -> 1
+  | { snd = Some _; _ } -> 2
+  | { fst = Some _; _ } -> 1
   | { ace = false; osum = 0; _ } -> 0
   | _ -> 3
 
@@ -85,8 +85,8 @@ let (++) h c =
 	  h.ace, h.osum + i in
   let num = cards_dealt h in
   let (fst, snd) = match num with
-	| 0 -> Some(c), None
-	| 1 -> h.fst, Some(c)
+	| 0 -> Some c, None
+	| 1 -> h.fst, Some c
 	| _ -> None, None in
   { ace = ace; osum = osum; fst = fst; snd = snd }
 
