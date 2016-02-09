@@ -5,6 +5,8 @@ let all_suites = [
 	TestHand.suite;
 	TestProb.suite;
 	TestShoe.suite;
+	TestRule.suite;
+	TestSim.suite;
   ]
 
 let () = run_test_tt_main ("all" >::: all_suites)
