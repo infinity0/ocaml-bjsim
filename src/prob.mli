@@ -1,21 +1,7 @@
 (** Probability distribution monad *)
 open Num
 
-include BatInterfaces.Monad
-(*
- * Ideally we would constrain 'a to be of OrderedType. i.e. define OrdMonad
- * but this is not yet possible in OCaml; see
- *
- * https://arxiv.org/abs/1512.01895 (or https://www.lpw25.net/ml2014.pdf)
- * https://github.com/ocamllabs/ocaml-modular-implicits
- *
- * Once this is done, we can sort the internal distribution table, then
- * define a way to compare two distributions for equality.
- *
- * If we need to, we can make OrdMonad implement Monad by doing this:
- *
- * http://hsenag.livejournal.com/11803.html?nojs=1
- *)
+type 'a m
 
 (**
  * Create a new distribution from an (item, probability) assoc list.
@@ -71,10 +57,43 @@ val expect_a : ('a -> 'a -> 'a) -> ('b -> num -> 'a) -> 'b m -> 'a
 val expect : 'a m -> ('a -> num) -> num
 
 (**
- * Alias for monadic bind.
+ * Return the sole item or None if there are more possibilities.
  *)
+val certain : 'a m -> 'a option
+
+(* include here to match implementation; in general we are always more likely to
+ * implement more abstract functions in terms of specific functions *)
+include BatInterfaces.Monad
+		with type 'a m := 'a m
+(*
+ * Ideally we would constrain 'a to be of OrderedType. i.e. define OrdMonad
+ * but this is not yet possible in OCaml; see
+ *
+ * https://arxiv.org/abs/1512.01895 (or https://www.lpw25.net/ml2014.pdf)
+ * https://github.com/ocamllabs/ocaml-modular-implicits
+ *
+ * Once this is done, we can sort the internal distribution table, then
+ * define a way to compare two distributions for equality.
+ *
+ * If we need to, we can make OrdMonad implement Monad by doing this:
+ *
+ * http://hsenag.livejournal.com/11803.html?nojs=1
+ *)
+
+(** Alias for Monad.bind. *)
 val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
+val join : 'a m m -> 'a m
+
+val apply : ('a -> 'b) m -> 'a m -> 'b m
+(** Alias for Applicative.join. *)
+val (<*>) : ('a -> 'b) m -> 'a m -> 'b m
 
 val map : ('a -> 'b) -> 'a m -> 'b m
+(** Alias for Functor.map. *)
+val (<$>) : ('a -> 'b) -> 'a m -> 'b m
+
+(* other common utils *)
 
 val filter : ('a -> bool) -> 'a m -> 'a m
+val exists : ('a -> bool) -> 'a m -> bool
+val for_all : ('a -> bool) -> 'a m -> bool

@@ -31,20 +31,14 @@ type hand = {
 	snd: card option;
   }
 
+type hand_status = Bust | Nat | Val of int
+
 let new_hand = {
 	ace = false;
 	osum = 0;
 	fst = None;
 	snd = None;
   }
-
-let int_of_hand h =
-  if not h.ace then
-	h.osum
-  else if h.osum >= 11 then
-	h.osum + 1
-  else
-	h.osum + 11
 
 let cards_dealt h = match h with
   | { snd = Some(_); _ } -> 2
@@ -54,9 +48,27 @@ let cards_dealt h = match h with
 
 let is_deal_complete h = (cards_dealt h) >= 2
 
+let int_of_hand h =
+  if not h.ace then
+	h.osum
+  else if h.osum >= 11 then
+	h.osum + 1
+  else
+	h.osum + 11
+
 let is_bust h = if h.ace then h.osum >= 21 else h.osum >= 22
 
 let is_nat h = h.ace && h.osum = 10 && cards_dealt h == 2
+
+let status_of_hand h =
+  (* if is_bust h then Bust else if is_nat h then Nat else Val (int_of_hand h) *)
+  if h.ace then
+	if h.osum >= 21 then Bust
+	else if h.osum >= 11 then Val (h.osum + 1)
+	else if h.osum = 10 && h.snd != None then Nat
+	else Val (h.osum + 11)
+  else
+	if h.osum >= 22 then Bust else Val h.osum
 
 let is_a17 h = h.ace && h.osum = 6
 
@@ -91,3 +103,5 @@ let string_of_hand h =
 	  else
 		"" in
 	maybe_ace ^ (string_of_int h.osum) ^ orig_cards
+
+let hand_of_card_list l = List.fold_left (++) new_hand l

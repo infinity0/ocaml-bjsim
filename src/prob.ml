@@ -54,6 +54,9 @@ let expect_a add mult m =
 
 let expect m f = expect_a add_num (fun v p -> mult_num (f v) p) m
 
+let certain m = let al = al_of_dist m in
+				if length al = 1 then Some (fst (hd al)) else None
+
 (* generic monad/structural helpers below *)
 
 let return v = dist_of_al [(v, _one)]
@@ -65,11 +68,22 @@ let bind m f =
 			 (al_of_dist (f v0)))
 		(al_of_dist m) in
   dist_of_al (concat al_list)
-
 let (>>=) = bind
 
-let map f m = bind m (fun v -> return (f v))
+let join m = m >>= (fun x -> x)
+
+let apply fm am = fm >>= (fun f -> am >>= (fun a -> return (f a)))
+let (<*>) = apply
+
+let map f m = m >>= (fun v -> return (f v))
+let (<$>) = map
 
 let filter pred m =
   snd (BatOption.get_exn (given m pred)
 						 (Invalid_total_probability _zero))
+
+let exists pred m = m |> al_of_dist |> List.map fst |> exists pred
+(* equiv but slower: match certain (map pred m) with Some(false) -> false | _ -> true *)
+
+let for_all pred m = m |> al_of_dist |> List.map fst |> for_all pred
+(* equiv but slower: match certain (map pred m) with Some(true) -> true | _ -> false *)
