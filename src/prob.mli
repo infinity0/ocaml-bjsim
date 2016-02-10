@@ -31,13 +31,13 @@ val fal_of_dist : 'a m -> ('a * float) list
 val string_of_dist : ('a -> Sexplib.Sexp.t) -> 'a m -> string
 
 (**
- * Condition this probability on the given filter predicate.
+ * Condition a distribution on the given filter predicate.
  *
  * Returns [Some (p, d)] where [p] is the proportion of [m]'s event space that
  * matched, and [d] is the resulting (normalised) distribution; or [None] if the
  * filter predicate matched no events.
  *)
-val given : 'a m -> ('a -> bool) -> (num * 'a m) option
+val given : ('a -> bool) -> 'a m -> (num * 'a m) option
 
 (**
  * Calculate an expected value for this distribution, generically.
@@ -51,10 +51,10 @@ val expect_a : ('a -> 'a -> 'a) -> ('b -> num -> 'a) -> 'b m -> 'a
 (**
  * Calculate an expected value for this distribution.
  *
- * The second argument is a function that converts each item into a rational
+ * The first argument is a function that converts each item into a rational
  * number which is the "value" for that item.
  *)
-val expect : 'a m -> ('a -> num) -> num
+val expect : ('a -> num) -> 'a m -> num
 
 (**
  * Return the sole item or None if there are more possibilities.

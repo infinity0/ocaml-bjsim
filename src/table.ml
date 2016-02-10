@@ -10,15 +10,15 @@ module type S = sig
 	val all_players : t -> int list
 	val current_player : t -> int
 	val hand_of_house : t -> hand
-	val hand_of_player : t -> int -> hand
+	val hand_of_player : int -> t -> hand
 	val is_turn_finished : t -> bool
 	val is_deal_complete : t -> bool
 	val finish_turn : t -> t
 	val next_turn : t -> t
 	val next_turn_checked : t -> t
 	val next_game : t -> t
-	val hit : t -> card option -> t Prob.m
-	val hit_or_finish : t -> (hand -> bool) -> card option -> t Prob.m
+	val hit : card option -> t -> t Prob.m
+	val hit_or_finish : (hand -> bool) -> card option -> t -> t Prob.m
   end
 
 type 'a default_t = {
@@ -49,7 +49,7 @@ S with type shoe_t = Shoe.t and type t = Shoe.t default_t = struct
 
 	let hand_of_house t = hd t.hands
 
-	let hand_of_player t i = nth t.hands i
+	let hand_of_player i t = nth t.hands i
 
 	let is_turn_finished t = t.finished
 
@@ -88,24 +88,24 @@ S with type shoe_t = Shoe.t and type t = Shoe.t default_t = struct
 
 	let _set_hand t i h = _replace_nth i t.hands h
 
-	let hit t co =
-	  let h = hand_of_player t (current_player t) in
+	let hit co t =
+	  let h = hand_of_player (current_player t) t in
 	  if not (can_hit h) then
 		Prob.return t
 	  else
 		let shoe_dist = match co with
 		  | None -> Shoe.draw t.shoe
-		  | Some(c) -> Prob.return (c, Shoe.draw_card t.shoe c) in
+		  | Some(c) -> Prob.return (c, Shoe.draw_card c t.shoe) in
 		Prob.map (fun (c, next_shoe) -> {
 					  t with
 					  shoe = next_shoe;
 					  hands = _set_hand t t.turn (h ++ c)
 					}) shoe_dist
 
-	let hit_or_finish t pred co =
-	  let h = hand_of_player t (current_player t) in
+	let hit_or_finish pred co t =
+	  let h = hand_of_player (current_player t) t in
 	  if can_hit h && pred h then
-		hit t co
+		hit co t
 	  else
 		Prob.return (finish_turn t)
 

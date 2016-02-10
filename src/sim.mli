@@ -22,14 +22,14 @@ module type S = sig
 	(**
 	 * Start a new simulation on a new table, with a particular shoe.
 	 *
-	 * First argument is the number of players.
+	 * The first argument is the number of players.
 	 *)
 	val new_sim_with_shoe : int -> shoe_t -> m
 
 	(**
 	 * Start a new simulation on a new table, with a given number of decks.
 	 *
-	 * First argument is the number of players.
+	 * The first argument is the number of players.
 	 *)
 	val new_sim_with_num_decks : int -> int -> m
 
@@ -42,40 +42,40 @@ module type S = sig
 	(**
 	 * Calculate the expected payout by the house for a given player.
 	 *
-	 * The second argument is a 2-arg function (house hand, player hand) that
-	 * returns the payout for that specific player hand. The third argument is
+	 * The first argument is a 2-arg function (house hand, player hand) that
+	 * returns the payout for that specific player hand. The second argument is
 	 * the index of the subject player.
 	 *)
-	val payout_of_player : m -> (hand -> hand -> num) -> int -> num
+	val payout_of_player : (hand -> hand -> num) -> int -> m -> num
 
 	(**
 	 * Execute a single player's turn. Execution ends after all possible games
 	 * (over the distribution of cards dealt) have finished that player's turn.
 	 *
-	 * The second argument is a strategy selector - given a player index, return
+	 * The first argument is a strategy selector - given a player index, return
 	 * a function that takes the current table state, and returns a distribution
 	 * over the next table state.
 	 *)
-	val exec_turn : m -> (int -> t -> m) -> m
+	val exec_turn : (int -> t -> m) -> m -> m
 
 	(**
 	 * Execute a round of the game, i.e. all player's turns. Execution ends
 	 * after the house player finishes their turn.
 	 *
-	 * The second argument is a strategy selector - given a player index, return
+	 * The first argument is a strategy selector - given a player index, return
 	 * a function that takes the current table state, and returns a distribution
 	 * over the next table state.
 	 *)
-	val exec_round : m -> (int -> t -> m) -> m
+	val exec_round : (int -> t -> m) -> m -> m
 
 	(**
 	 * Start the next game and deal two cards to everyone.
 	 *
-	 * The second argument is a list of specific cards to deal to players, in
+	 * The first argument is a list of specific cards to deal to players, in
 	 * the same order as they would be dealt in a normal game. When the list is
 	 * exhausted, random cards are dealt from that point onwards.
 	 *)
-	val deal_next_game : m -> card list -> m
+	val deal_next_game : card list -> m -> m
   end
 
 module Make :

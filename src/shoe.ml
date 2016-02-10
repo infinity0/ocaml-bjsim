@@ -8,13 +8,13 @@ module type S = sig
 	(* TODO: deal with empty shoes *)
 	val new_shoe : int -> t
 	val card_prob : t -> card Prob.m
-	val draw_card : t -> card -> t
+	val draw_card : card -> t -> t
 	val draw : t -> (card * t) Prob.m
 	val string_of_shoe : t -> string
   end
 
 let derive_draw draw_card card_prob = fun d ->
-  Prob.map (fun c -> c, draw_card d c) (card_prob d)
+  Prob.map (fun c -> c, draw_card c d) (card_prob d)
 
 let (/-) a b = num_of_int(a) // num_of_int(b)
 
@@ -27,7 +27,7 @@ module VoidShoe = struct
 					  |> map (fun c -> c, (cards_per_deck c) /- 52)
 					  |> Prob.dist_of_al
 
-	let draw_card d c = d
+	let draw_card c d = d
 
 	let draw = derive_draw draw_card card_prob
 
@@ -54,7 +54,7 @@ module RealShoe = struct
 			  c, (cards_per_deck c * d.num_decks - dealt) /- cards_left)
 	  |> Prob.dist_of_al
 
-	let draw_card d card = {
+	let draw_card card d = {
 		d with
 		num_dealt = map (fun (c, n) -> if c = card then n + 1 else n)
 						(cards_dealt d);

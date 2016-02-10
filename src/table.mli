@@ -37,7 +37,7 @@ module type S = sig
 
 	val hand_of_house : t -> hand
 
-	val hand_of_player : t -> int -> hand
+	val hand_of_player : int -> t -> hand
 
 	val is_turn_finished : t -> bool
 
@@ -80,12 +80,15 @@ module type S = sig
 	 * If the argument is [None], hit a random card based on the state of the
 	 * shoe. Otherwise, hit the card specified inside the [Some] container.
 	 *)
-	val hit : t -> card option -> t Prob.m
+	val hit : card option -> t -> t Prob.m
 
 	(**
 	 * Hit the current player, or finish the turn if their hand cannot be hit.
+	 *
+	 * The first argument is an additional predicate that the hand must satisfy
+	 * in order for the hit to occur; if not then we finish their turn instead.
 	 *)
-	val hit_or_finish : t -> (hand -> bool) -> card option -> t Prob.m
+	val hit_or_finish : (hand -> bool) -> card option -> t -> t Prob.m
   end
 
 (**

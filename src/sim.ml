@@ -11,10 +11,10 @@ module type S = sig
 	val new_sim_with_shoe : int -> shoe_t -> m
 	val new_sim_with_num_decks : int -> int -> m
 	val new_sim : m Lazy.t
-	val payout_of_player : m -> (hand -> hand -> num) -> int -> num
-	val exec_turn : m -> (int -> t -> m) -> m
-	val exec_round : m -> (int -> t -> m) -> m
-	val deal_next_game : m -> card list -> m
+	val payout_of_player :(hand -> hand -> num) -> int -> m -> num
+	val exec_turn : (int -> t -> m) -> m -> m
+	val exec_round : (int -> t -> m) -> m -> m
+	val deal_next_game : card list -> m -> m
   end
 
 module Make
@@ -40,24 +40,24 @@ S with type shoe_t = Table.shoe_t and
 
 	let new_sim = lazy (new_sim_with_shoe 1 (Shoe.new_shoe Rule.default_num_decks))
 
-	let payout_of_player m f player =
-	  expect m (fun gs -> f (hand_of_house gs) (hand_of_player gs player))
+	let payout_of_player f player m =
+	  expect (fun gs -> f (hand_of_house gs) (hand_of_player player gs)) m
 
-	let rec _do_strat_until_finished m f =
+	let rec _do_strat_until_finished f m =
 	  if for_all is_turn_finished m then m
-	  else _do_strat_until_finished (m >>= f) f
+	  else m >>= f |> _do_strat_until_finished f
 
-	let _exec_turn m strat_of_player player = (* assume `player` is correct *)
+	let _exec_turn strat_of_player player m = (* assume `player` is correct *)
 	  if exists is_turn_finished m then
 		raise (Invalid_argument "a turn is already finished")
 	  else
-		let strat = strat_of_player player in
-		_do_strat_until_finished
-		  m (fun t ->
-			 if is_turn_finished t then return t
-			 else let m = strat t in
-				  if for_all (fun t -> current_player t == player) m then m
-				  else raise (Invalid_argument "strat advanced to next player"))
+		m
+		|> _do_strat_until_finished
+			 (fun t ->
+			  if is_turn_finished t then return t
+			  else let m = (strat_of_player player) t in
+				   if for_all (fun t -> current_player t == player) m then m
+				   else raise (Invalid_argument "strat advanced to next player"))
 		|> map next_turn (* already checked by _do_strat_until_finished *)
 
 	let _get_player_for_exec m =
@@ -68,27 +68,28 @@ S with type shoe_t = Table.shoe_t and
 		| None -> raise (Invalid_argument "not all on same player's turn")
 		| Some player -> player
 
-	let exec_turn m strat_of_player =
+	let exec_turn strat_of_player m =
 	  let player = _get_player_for_exec m in
-	  _exec_turn m strat_of_player player
+	  m |> _exec_turn strat_of_player player
 
-	let rec exec_round m strat_of_player =
+	let rec exec_round strat_of_player m =
 	  let player = _get_player_for_exec m in
-	  let next_m = _exec_turn m strat_of_player player in
+	  let next_m = m |> _exec_turn strat_of_player player in
 	  if player = 0 then next_m (* stop recursing after house turn *)
-	  else exec_round next_m strat_of_player
+	  else next_m |> exec_round strat_of_player
 
-	let rec _do_deal_until_complete m cards =
+	let rec _do_deal_until_complete cards m =
 	  (* during the deal we bypass the turn_finished flag, and don't check it *)
 	  assert (not @@ exists is_turn_finished m);
 	  if for_all is_deal_complete m then m
 	  else let co, rest = match cards with
 			 | [] -> None, []
 			 | c :: rest -> Some(c), rest in
-		   let next_m = m >>= (fun gs -> hit gs co) |> (map next_turn) in
-		   _do_deal_until_complete next_m rest
+		   m >>= hit co |> map next_turn |> _do_deal_until_complete rest
 
-	let deal_next_game m cards = _do_deal_until_complete (map next_game m) cards
+	let deal_next_game cards m =
+	  m |> map next_game |> _do_deal_until_complete cards
+
   end
 
 module Make2

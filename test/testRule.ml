@@ -8,7 +8,7 @@ let tc_basic ctx =
   let _one = num_of_int 1 in
   let _zero = num_of_int 0 in
   let _neg_one = num_of_int (-1) in
-  let _house_push_22 = fun h -> if is_22 h then _zero else _one in
+  let _house_push_22 h = if is_22 h then _zero else _one in
   let bjs_pay h p = pay_base ~nat_payout:_one ~house_bust:_house_push_22 h p in
   assert_equal (is_nat (h [7])) false;
   assert_equal (bjs_pay (h [10; 1]) (h [1; 10])) _zero;

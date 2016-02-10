@@ -22,11 +22,11 @@ module type S = sig
 	 * Draw a specific card from the shoe, returning the next state.
 	 *
 	 * Obviously this is not realistic, and is only really meant for testing and
-	 * to help implement [draw].
+	 * to help implement [draw] and [Sim.S.deal_next_game].
 	 *
 	 * Raises [Invalid_argument] if the card is not available.
 	 *)
-	val draw_card : t -> card -> t
+	val draw_card : card -> t -> t
 
 	(**
 	 * Draw a card randomly from the shoe.
@@ -43,7 +43,7 @@ module type S = sig
  * Automatically derive a {!Shoe.draw} implementation from {!Shoe.draw_card} and
  * {!Shoe.card_prob} implementations.
  *)
-val derive_draw : ('a -> card -> 'a) ->
+val derive_draw : (card -> 'a -> 'a) ->
 				  ('a -> card Prob.m) ->
 				  ('a -> (card * 'a) Prob.m)
 

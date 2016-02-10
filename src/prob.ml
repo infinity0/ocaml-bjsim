@@ -40,7 +40,7 @@ let fal_of_dist m = map (fun (v, p) -> v, float_of_num(p)) (al_of_dist m)
 
 let string_of_dist sexp_of_v m = string_of_sexp (sexp_of_m sexp_of_v m)
 
-let given m pred =
+let given pred m =
   let dist = filter (fun (v, p) -> pred(v)) (al_of_dist m) in
   let sum = (_foldp dist add_num) in
   if sum =/ _zero then
@@ -52,7 +52,7 @@ let expect_a add mult m =
   let l = map (fun (v, p) -> mult v p) (al_of_dist m) in
   fold_left add (hd l) (tl l)
 
-let expect m f = expect_a add_num (fun v p -> mult_num (f v) p) m
+let expect f m = expect_a add_num (fun v p -> mult_num (f v) p) m
 
 let certain m = let al = al_of_dist m in
 				if length al = 1 then Some (fst (hd al)) else None
@@ -79,7 +79,7 @@ let map f m = m >>= (fun v -> return (f v))
 let (<$>) = map
 
 let filter pred m =
-  snd (BatOption.get_exn (given m pred)
+  snd (BatOption.get_exn (given pred m)
 						 (Invalid_total_probability _zero))
 
 let exists pred m = m |> al_of_dist |> List.map fst |> exists pred

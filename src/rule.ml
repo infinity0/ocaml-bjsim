@@ -21,12 +21,12 @@ let _one = num_of_int 1
 
 module HouseHitA17 (Table : Table.S) = struct
 	let house_play t =
-	  Table.hit_or_finish t (fun h -> int_of_hand h <= 16 || is_a17 h) None
+	  Table.hit_or_finish (fun h -> int_of_hand h <= 16 || is_a17 h) None t
   end
 
 module HouseStandA17 (Table : Table.S) = struct
 	let house_play t =
-	  Table.hit_or_finish t (fun h -> int_of_hand h <= 16) None
+	  Table.hit_or_finish (fun h -> int_of_hand h <= 16) None t
   end
 
 let pay_base ?(nat_payout = num_of_int 3 // num_of_int 2)
