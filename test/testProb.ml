@@ -3,7 +3,7 @@ open Prob
 open Num
 
 let assert_raises_any f = try
-	f(); raise (Failure "succeeded unexpectedly")
+    f(); raise (Failure "succeeded unexpectedly")
   with | _ -> ()
 
 let (/-) a b = num_of_int(a) // num_of_int(b)
@@ -25,6 +25,6 @@ let tc_raise_invalid ctx =
 
 (** TODO: OUnit2 should detect test cases automatically. *)
 let suite = "ts_prob" >::: [
-	  "tc_basic_dedup" >:: tc_basic_dedup;
-	  "tc_raise_invalid" >:: tc_raise_invalid
-]
+    "tc_basic_dedup" >:: tc_basic_dedup;
+    "tc_raise_invalid" >:: tc_raise_invalid
+  ]

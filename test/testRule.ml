@@ -23,5 +23,5 @@ let tc_basic ctx =
 
 (** TODO: OUnit2 should detect test cases automatically. *)
 let suite = "ts_rule" >::: [
-	  "tc_basic" >:: tc_basic;
-]
+    "tc_basic" >:: tc_basic;
+  ]

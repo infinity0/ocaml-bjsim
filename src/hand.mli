@@ -9,7 +9,7 @@ type card
  *
  * 1 is ace, 10 is ten/jack/queen/king, values in between represent the
  * corresponding card, and all other values raise Invalid_argument.
- *)
+*)
 val card_of_int : int -> card
 
 val int_of_card : card -> int
@@ -37,7 +37,7 @@ val status_of_hand : hand -> hand_status
 
 (**
  * Get the value of the hand. If there is an ace, the best value is returned.
- *)
+*)
 val int_of_hand : hand -> int
 
 val is_bust : hand -> bool

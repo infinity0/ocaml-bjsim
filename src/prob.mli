@@ -7,12 +7,12 @@ type 'a m
  * Create a new distribution from an (item, probability) assoc list.
  *
  * Probabilities are non-negative rationals ([Num.num]) and must sum to 1.
- *)
+*)
 val dist_of_al : ('a * num) list -> 'a m
 
 (**
  * Unwrap a distribution into an (item, probability) assoc list.
- *)
+*)
 val al_of_dist : 'a m -> ('a * num) list
 
 (**
@@ -22,12 +22,12 @@ val al_of_dist : 'a m -> ('a * num) list
  * This method is more for display and testing purposes - you should NOT use
  * the return value for further processing. Specifically, due to floating
  * point semantics, the sum of these may not be exactly 1.
- *)
+*)
 val fal_of_dist : 'a m -> ('a * float) list
 
 (**
  * Return a string representation of this distribution.
- *)
+*)
 val string_of_dist : ('a -> Sexplib.Sexp.t) -> 'a m -> string
 
 (**
@@ -36,7 +36,7 @@ val string_of_dist : ('a -> Sexplib.Sexp.t) -> 'a m -> string
  * Returns [Some (p, d)] where [p] is the proportion of [m]'s event space that
  * matched, and [d] is the resulting (normalised) distribution; or [None] if the
  * filter predicate matched no events.
- *)
+*)
 val given : ('a -> bool) -> 'a m -> (num * 'a m) option
 
 (**
@@ -45,7 +45,7 @@ val given : ('a -> bool) -> 'a m -> (num * 'a m) option
  * The first arg is a "sum"-like binary operator. The second arg combines
  * each item and its probability, into an element to be summed. The third
  * argument is the distribution to apply these operations to.
- *)
+*)
 val expect_a : ('a -> 'a -> 'a) -> ('b -> num -> 'a) -> 'b m -> 'a
 
 (**
@@ -53,18 +53,18 @@ val expect_a : ('a -> 'a -> 'a) -> ('b -> num -> 'a) -> 'b m -> 'a
  *
  * The first argument is a function that converts each item into a rational
  * number which is the "value" for that item.
- *)
+*)
 val expect : ('a -> num) -> 'a m -> num
 
 (**
  * Return the sole item or None if there are more possibilities.
- *)
+*)
 val certain : 'a m -> 'a option
 
 (* include here to match implementation; in general we are always more likely to
  * implement more abstract functions in terms of specific functions *)
 include BatInterfaces.Monad
-		with type 'a m := 'a m
+  with type 'a m := 'a m
 (*
  * Ideally we would constrain 'a to be of OrderedType. i.e. define OrdMonad
  * but this is not yet possible in OCaml; see
@@ -78,7 +78,7 @@ include BatInterfaces.Monad
  * If we need to, we can make OrdMonad implement Monad by doing this:
  *
  * http://hsenag.livejournal.com/11803.html?nojs=1
- *)
+*)
 
 (** Alias for Monad.bind. *)
 val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
