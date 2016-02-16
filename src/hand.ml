@@ -8,14 +8,20 @@ let card_of_int i =
 
 let int_of_card c = match c with Card i -> i
 
-let string_of_card c = match c with
-  | Card 1 -> "A"
-  | Card 10 -> "J"
-  | Card i -> string_of_int(i)
+let card_of_char c = match c with
+  | 'A' -> Card 1
+  | 'J' -> Card 10
+  | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' -> Card (int_of_string (String.make 1 c))
+  | _ -> raise (Invalid_argument (String.make 1 c))
 
-let string_of_card_opt co = match co with
-  | Some c -> string_of_card c
-  | None -> "?"
+let char_of_card c = match c with
+  | Card 1 -> 'A'
+  | Card 10 -> 'J'
+  | Card i -> String.get (string_of_int i) 0
+
+let char_of_card_opt co = match co with
+  | Some c -> char_of_card c
+  | None -> '?'
 
 let all_cards = List.map card_of_int [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
 
@@ -99,7 +105,7 @@ let string_of_hand h =
     let maybe_ace = if h.ace then "A" else "" in
     let orig_cards =
       if cards_dealt h <= 2 then
-        "(" ^ (string_of_card_opt h.fst) ^ (string_of_card_opt h.snd) ^ ")"
+        BatString.of_list ['('; char_of_card_opt h.fst; char_of_card_opt h.snd; ')']
       else
         "" in
     maybe_ace ^ (string_of_int h.osum) ^ orig_cards

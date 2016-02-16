@@ -14,9 +14,11 @@ val card_of_int : int -> card
 
 val int_of_card : card -> int
 
-val string_of_card : card -> string
+val card_of_char : char -> card
 
-val string_of_card_opt : card option -> string
+val char_of_card : card -> char
+
+val char_of_card_opt : card option -> char
 
 val all_cards : card list
 

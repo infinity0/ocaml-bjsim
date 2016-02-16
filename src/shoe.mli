@@ -37,6 +37,8 @@ module type S = sig
    * Return a string representation of the deck.
   *)
   val string_of_shoe : t -> string
+
+  val shoe_of_string : string -> t
 end
 
 (**

@@ -11,6 +11,7 @@ module type S = sig
   val draw_card : card -> t -> t
   val draw : t -> (card * t) Prob.m
   val string_of_shoe : t -> string
+  val shoe_of_string : string -> t
 end
 
 let derive_draw draw_card card_prob = fun d ->
@@ -31,7 +32,9 @@ module VoidShoe = struct
 
   let draw = derive_draw draw_card card_prob
 
-  let string_of_shoe d = "(no card counting)"
+  let string_of_shoe d = "()"
+
+  let shoe_of_string s = new_shoe 0
 end
 
 module RealShoe = struct
@@ -63,4 +66,6 @@ module RealShoe = struct
   let draw = derive_draw draw_card card_prob
 
   let string_of_shoe d = string_of_sexp (sexp_of_t d)
+
+  let shoe_of_string s = t_of_sexp (sexp_of_string s)
 end
