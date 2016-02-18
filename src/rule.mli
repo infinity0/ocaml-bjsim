@@ -60,3 +60,8 @@ module BJS : MakeS
  * Can only hit/switch. Natural pays 1:1.
 *)
 module BJV : MakeS
+
+
+val of_name : string -> (module MakeS) option
+val to_name : (module MakeS) -> string option
+val all_names : string list

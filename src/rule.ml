@@ -44,6 +44,10 @@ let pay_base
   | (Val hv, Val pv) -> num_of_int (compare pv hv)
 
 
+open Reg
+let { all; reg_add; } : (module MakeS) empty = reg_init []
+
+
 module BJ (Table : Table.S) : S with type table_t = Table.t = struct
   type table_t = Table.t
 
@@ -54,6 +58,7 @@ module BJ (Table : Table.S) : S with type table_t = Table.t = struct
   let pay h p = pay_base h p
   include HouseHitA17(Table)
 end
+let all = reg_add all "BJ" (module BJ)
 
 
 module BJS (Table : Table.S) : S with type table_t = Table.t = struct
@@ -67,6 +72,7 @@ module BJS (Table : Table.S) : S with type table_t = Table.t = struct
   let pay h p = pay_base ~nat_payout:_one ~house_bust:_house_push_22 h p
   include HouseHitA17(Table)
 end
+let all = reg_add all "BJS" (module BJS)
 
 
 module BJV (Table : Table.S) : S with type table_t = Table.t = struct
@@ -79,3 +85,7 @@ module BJV (Table : Table.S) : S with type table_t = Table.t = struct
   let pay h p = pay_base ~nat_payout:_one h p
   include HouseStandA17(Table)
 end
+let all = reg_add all "BJV" (module BJV)
+
+
+let { of_name; to_name; all_names; } = reg_make all;;

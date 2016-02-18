@@ -77,3 +77,8 @@ module RealShoe : sig
   *)
   val num_dealt : t -> card -> int
 end
+
+
+val of_name : string -> (module S) option
+val to_name : (module S) -> string option
+val all_names : string list

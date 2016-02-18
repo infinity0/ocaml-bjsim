@@ -1,3 +1,0 @@
-open Prob
-
-let _ = ();;

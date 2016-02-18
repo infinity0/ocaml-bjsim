@@ -22,15 +22,15 @@ SourceRepository master
 
 Library bjsim
   Path: src
-  Modules: Hand, Prob, Rule, Shoe, Sim, Table
+  Modules: Hand, Prob, Reg, Rule, Shoe, Sim, Table
   BuildDepends: batteries, sexplib.syntax, sexplib_num
 
 Executable bjsim
-  Path: src
+  Path: .
   Install: true
-  MainIs: main.ml
+  MainIs: bjsim.ml
   CompiledObject: best
-  BuildDepends: bjsim
+  BuildDepends: batteries, bjsim, cmdliner
   ByteOpt: -thread
   NativeOpt: -thread
 

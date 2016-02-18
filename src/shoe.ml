@@ -19,6 +19,11 @@ let derive_draw draw_card card_prob = fun d ->
 
 let (///) a b = num_of_int(a) // num_of_int(b)
 
+
+open Reg
+let { all; reg_add; } : (module S) empty = reg_init []
+
+
 module VoidShoe = struct
   type t = unit
 
@@ -38,6 +43,8 @@ module VoidShoe = struct
     | "()" -> new_shoe 0
     | _ -> raise (Invalid_argument "the only valid VoidShoe is ()")
 end
+let all = reg_add all "VoidShoe" (module VoidShoe)
+
 
 module RealShoe = struct
   type t = {
@@ -86,3 +93,7 @@ module RealShoe = struct
 
   let shoe_of_string s = check_t (t_of_sexp (Sexplib.Sexp.of_string s))
 end
+let all = reg_add all "RealShoe" (module RealShoe)
+
+
+let { of_name; to_name; all_names; } = reg_make all
