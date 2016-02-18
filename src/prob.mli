@@ -57,7 +57,7 @@ val expect_a : ('a -> 'a -> 'a) -> ('b -> num -> 'a) -> 'b m -> 'a
 val expect : ('a -> num) -> 'a m -> num
 
 (**
- * Return the sole item or None if there are more possibilities.
+ * Return the sole item or [None] if there are more possibilities.
 *)
 val certain : 'a m -> 'a option
 

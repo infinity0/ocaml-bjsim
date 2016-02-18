@@ -22,7 +22,7 @@ module type S = sig
    * Draw a specific card from the shoe, returning the next state.
    *
    * Obviously this is not realistic, and is only really meant for testing and
-   * to help implement [draw] and [Sim.S.deal_next_game].
+   * to help implement {!draw} and {!Sim.S.deal_next_game}.
    *
    * Raises [Invalid_argument] if the card is not available.
   *)
@@ -42,8 +42,8 @@ module type S = sig
 end
 
 (**
- * Automatically derive a {!Shoe.draw} implementation from {!Shoe.draw_card} and
- * {!Shoe.card_prob} implementations.
+ * Automatically derive a {!Shoe.S.draw} implementation from {!Shoe.S.draw_card}
+ * and {!Shoe.S.card_prob} implementations.
 *)
 val derive_draw :
   (card -> 'a -> 'a) ->
@@ -53,17 +53,27 @@ val derive_draw :
 (**
  * A shoe that (depending on your perspective) loses track of the cards that it
  * has already dealt, or has infinite decks, or a view of a non-counting player.
+ *
+ * The only valid input to {!Shoe.S.shoe_of_string} is [()].
 *)
 module VoidShoe : S
 
 (**
  * The actual state of the cards, or (alternatively) a perfect counter's view.
+ *
+ * Example of a valid input to {!Shoe.S.shoe_of_string} is
+ *
+ * [((num_decks n) (num_dealt (a x x x x x x x x j)))]
+ *
+ * where [a] and [j] are the number of aces and 10/j/q/k cards respectively that
+ * have already been dealt (i.e. are no longer in the shoe), and the [x] are the
+ * number of [2..9] cards that have been dealt, in that order.
 *)
 module RealShoe : sig
   include S
 
   (**
-   * Return an assoc list of the cards already dealt.
+   * The number of times a given card has been dealt so far, for a given shoe.
   *)
-  val cards_dealt : t -> (card * int) list
+  val num_dealt : t -> card -> int
 end

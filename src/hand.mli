@@ -8,7 +8,7 @@ type card
  * Create a card out of an integer.
  *
  * 1 is ace, 10 is ten/jack/queen/king, values in between represent the
- * corresponding card, and all other values raise Invalid_argument.
+ * corresponding card, and all other values raise [Invalid_argument].
 *)
 val card_of_int : int -> card
 
@@ -22,7 +22,9 @@ val char_of_card_opt : card option -> char
 
 val all_cards : card list
 
-val cards_per_deck : card -> int
+val num_per_deck : card -> int
+
+val num_all_per_deck : int
 
 
 (** A single player's entire hand *)

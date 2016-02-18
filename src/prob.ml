@@ -38,7 +38,7 @@ let al_of_dist m = match m with ProbDist(dist) -> dist
 
 let fal_of_dist m = map (fun (v, p) -> v, float_of_num(p)) (al_of_dist m)
 
-let string_of_dist sexp_of_v m = string_of_sexp (sexp_of_m sexp_of_v m)
+let string_of_dist sexp_of_v m = Sexplib.Sexp.to_string (sexp_of_m sexp_of_v m)
 
 let given pred m =
   let dist = filter (fun (v, p) -> pred(v)) (al_of_dist m) in

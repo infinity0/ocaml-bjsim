@@ -4,13 +4,13 @@ open Shoe
 
 let tc_total ctx =
   let open RealShoe in
-  let num_dealt d = List.map snd (cards_dealt d) in
-  assert_equal (num_dealt (new_shoe 6))
+  let all_dealt s = List.map (num_dealt s) all_cards in
+  assert_equal (all_dealt (new_shoe 6))
     [0; 0; 0; 0; 0; 0; 0; 0; 0; 0];
   let draw_one = List.map fst (Prob.al_of_dist (draw (new_shoe 6))) in
-  assert_equal (num_dealt (List.assoc (card_of_int 1) draw_one))
+  assert_equal (all_dealt (List.assoc (card_of_int 1) draw_one))
     [1; 0; 0; 0; 0; 0; 0; 0; 0; 0];
-  assert_equal (num_dealt (List.assoc (card_of_int 2) draw_one))
+  assert_equal (all_dealt (List.assoc (card_of_int 2) draw_one))
     [0; 1; 0; 0; 0; 0; 0; 0; 0; 0];;
 
 

@@ -14,7 +14,7 @@ module type S = sig
    * Create a new table.
    *
    * The first argument is the number of decks to start with. The second
-   * argument is the data type of the shoe; see {!Shoe}.
+   * argument is the data type of the shoe; see {!Shoe.S.t}.
   *)
   val new_table : int -> shoe_t -> t
 

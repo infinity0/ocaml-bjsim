@@ -25,9 +25,11 @@ let char_of_card_opt co = match co with
 
 let all_cards = List.map card_of_int [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
 
-let cards_per_deck c = match (int_of_card c) with
+let num_per_deck c = match (int_of_card c) with
   | 10 -> 16
   | _ -> 4
+
+let num_all_per_deck = List.fold_left (+) 0 (List.map num_per_deck all_cards)
 
 
 type hand = {
