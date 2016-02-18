@@ -3,7 +3,9 @@ open Hand
 open Shoe
 
 let tc_total ctx =
-  let open RealShoe in
+  let {
+    new_shoe; num_dealt; draw;
+  } = realShoe in
   let all_dealt s = List.map (num_dealt s) all_cards in
   assert_equal (all_dealt (new_shoe 6))
     [0; 0; 0; 0; 0; 0; 0; 0; 0; 0];

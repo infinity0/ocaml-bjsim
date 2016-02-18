@@ -4,41 +4,42 @@ open Hand
 open Prob
 open Num
 
-(** Module signature *)
-module type S = sig
-  (** Data type of the shoe on the table *)
-  type shoe_t
+type 's tt = 's Table.t
+type 's tm = 's Table.t Prob.m
 
-  (** Data type of the table *)
-  type t
+(**
+ * Module functions, as a record.
+ *
+ * The type parameter ['s] is the data type of the shoe on the table.
+*)
+type 's r = {
+  rule_r : 's Rule.r;
+  (** [Rule] module functions, as a record. *)
 
-  (** Probability distribution over possible table states *)
-  type m = t Prob.m
+  table_r : 's Table.r;
+  (** [Table] module functions, as a record. *)
 
-  module Rule : Rule.S with type table_t = t
-
-  module Table : Table.S with type t = t
-
+  new_sim_with_shoe : int -> 's -> 's tm;
   (**
    * Start a new simulation on a new table, with a particular shoe.
    *
    * The first argument is the number of players.
   *)
-  val new_sim_with_shoe : int -> shoe_t -> m
 
+  new_sim_with_num_decks : int -> int -> 's tm;
   (**
    * Start a new simulation on a new table, with a given number of decks.
    *
    * The first argument is the number of players.
   *)
-  val new_sim_with_num_decks : int -> int -> m
 
+  new_sim : 's tm Lazy.t;
   (**
    * Start a new simulation on a new table, with the house and one player,
    * and with the default number of decks for the rule in play.
   *)
-  val new_sim : m Lazy.t
 
+  payout_of_player : (hand -> hand -> num) -> int -> 's tm -> num;
   (**
    * Calculate the expected payout by the house for a given player.
    *
@@ -46,8 +47,8 @@ module type S = sig
    * returns the payout for that specific player hand. The second argument is
    * the index of the subject player.
   *)
-  val payout_of_player : (hand -> hand -> num) -> int -> m -> num
 
+  exec_turn : (int -> 's tt -> 's tm) -> 's tm -> 's tm;
   (**
    * Execute a single player's turn. Execution ends after all possible games
    * (over the distribution of cards dealt) have finished that player's turn.
@@ -56,8 +57,8 @@ module type S = sig
    * a function that takes the current table state, and returns a distribution
    * over the next table state.
   *)
-  val exec_turn : (int -> t -> m) -> m -> m
 
+  exec_round : (int -> 's tt -> 's tm) -> 's tm -> 's tm;
   (**
    * Execute a round of the game, i.e. all player's turns. Execution ends
    * after the house player finishes their turn.
@@ -66,8 +67,8 @@ module type S = sig
    * a function that takes the current table state, and returns a distribution
    * over the next table state.
   *)
-  val exec_round : (int -> t -> m) -> m -> m
 
+  deal_next_game : card list -> 's tm -> 's tm;
   (**
    * Start the next game and deal two cards to everyone.
    *
@@ -75,18 +76,8 @@ module type S = sig
    * the same order as they would be dealt in a normal game. When the list is
    * exhausted, random cards are dealt from that point onwards.
   *)
-  val deal_next_game : card list -> m -> m
-end
+}
 
-module Make :
-  functor (Rule : Rule.S) ->
-  functor (Table : Table.S with type t = Rule.table_t) ->
-  functor (Shoe : Shoe.S with type t = Table.shoe_t) ->
-    S with type shoe_t = Table.shoe_t
-       and type t = Table.t
+val make : 's Rule.r -> 's Table.r -> 's Shoe.r -> 's r
 
-module Make2 :
-  functor (MakeRule : Rule.MakeS) ->
-  functor (Shoe : Shoe.S) ->
-    S with type shoe_t = Shoe.t
-       and type t = Shoe.t Table.default_t
+val make2 : ('s Table.r -> 's Rule.r) -> 's Shoe.r -> 's r

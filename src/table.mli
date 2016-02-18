@@ -2,103 +2,107 @@
 
 open Hand
 
-(** Module signature *)
-module type S = sig
-  (** Data type of the shoe on the table *)
-  type shoe_t
+(**
+ * Data type of a table description.
+ *
+ * The type parameter ['s] is the data type of the shoe on the table.
+*)
+type 's desc
 
-  (** Data type of the table *)
-  type t
+(**
+ * Data type of a table.
+ *
+ * The type parameter ['s] is the data type of the shoe on the table.
+*)
+type 's t
 
+(**
+ * Module functions, as a record.
+ *
+ * The type parameter ['s] is the data type of the shoe on the table.
+*)
+type 's r = {
+  new_table : int -> 's -> 's t;
   (**
    * Create a new table.
    *
    * The first argument is the number of decks to start with. The second
-   * argument is the data type of the shoe; see {!Shoe.S.t}.
+   * argument is the data type of the shoe; see {!Shoe.r}.
   *)
-  val new_table : int -> shoe_t -> t
 
+  num_players : 's t -> int;
   (**
    * Number of players, excluding the house, on the table
   *)
-  val num_players : t -> int
 
+  all_players : 's t -> int list;
   (**
    * List of player indexes, in the order in which they play the game.
    *
    * The house player (index 0) is the last element.
   *)
-  val all_players : t -> int list
 
+  current_player : 's t -> int;
   (**
    * Index of the current player.
   *)
-  val current_player : t -> int
 
-  val hand_of_house : t -> hand
+  hand_of_house : 's t -> hand;
 
-  val hand_of_player : int -> t -> hand
+  hand_of_player : int -> 's t -> hand;
 
-  val is_turn_finished : t -> bool
+  is_turn_finished : 's t -> bool;
 
+  is_deal_complete : 's t -> bool;
   (**
    * Has everyone been dealt two cards?
   *)
-  val is_deal_complete : t -> bool
 
+  finish_turn : 's t -> 's t;
   (**
    * Finish the current player's turn.
    *
    * The caller should have already checked that [not @@ is_turn_finished t]
   *)
-  val finish_turn : t -> t
 
+  next_turn : 's t -> 's t;
   (**
    * Move to the next player's turn.
    *
    * The caller should have already checked that [not @@ is_turn_finished t]
   *)
-  val next_turn : t -> t
 
+  next_turn_checked : 's t -> 's t;
   (**
    * Move to the next player's turn.
    *
    * Raises [Invalid_argument] if the current player's turn is not finished.
   *)
-  val next_turn_checked : t -> t
 
+  next_game : 's t -> 's t;
   (**
    * Start the next game.
    *
    * Reset all players' hands, but keep the state of the shoe.
   *)
-  val next_game : t -> t
 
+  hit : card option -> 's t -> 's t Prob.m;
   (**
    * Hit the current player, or do nothing if their hand cannot be hit.
    *
    * If the argument is [None], hit a random card based on the state of the
    * shoe. Otherwise, hit the card specified inside the [Some] container.
   *)
-  val hit : card option -> t -> t Prob.m
 
+  hit_or_finish : (hand -> bool) -> card option -> 's t -> 's t Prob.m;
   (**
    * Hit the current player, or finish the turn if their hand cannot be hit.
    *
    * The first argument is an additional predicate that the hand must satisfy
    * in order for the hit to occur; if not then we finish their turn instead.
   *)
-  val hit_or_finish : (hand -> bool) -> card option -> t -> t Prob.m
-end
 
-(**
- * Data type of table as returned by {!Table.Make}.
- *
- * The first type parameter is the data type of the shoe on the table.
-*)
-type 'shoe_t default_t
+  describe_hands : 's t -> 's desc;
+}
 
-module Make :
-  functor (Shoe : Shoe.S) ->
-    S with type shoe_t = Shoe.t
-       and type t = Shoe.t default_t
+val make : 's Shoe.r -> 's r
