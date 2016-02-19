@@ -13,7 +13,8 @@ let tc_basic ctx =
   assert_equal (n (h [10; 1; 2])) 3;
   assert_equal (int_of_hand (h [1; 10])) 21;
   assert_bool "blackjack" (is_nat (h [1; 10]));
-  assert_bool "basic '=' test" ((card_of_int 1) = (card_of_int 1));;
+  assert_bool "basic '=' test" ((card_of_int 1) = (card_of_int 1));
+  assert_bool "basic '<>' test" ((card_of_int 1) <> (card_of_int 2));;
 
 
 (** TODO: OUnit2 should detect test cases automatically. *)

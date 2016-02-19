@@ -5,6 +5,8 @@ open Num
 (** Actions possible in any game *)
 type action = Hit | Stand | Double | Split | Surrender
 
+val char_of_action : action -> char
+
 (** Rules for a particular game variant. *)
 module type S = sig
   (** Type of table used in this game. *)

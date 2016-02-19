@@ -56,14 +56,13 @@ let bjsim_main
   let module OurShoe = (val shoe_model) in
   let module MakeOurRule = (val rule) in
   let module OurSim = Sim.Make2 (MakeOurRule) (OurShoe) in
+  (* TODO support "hands" *)
   let sim = match shoe_spec with
     | DefaultNumDecks -> Lazy.force OurSim.new_sim
     | NumDecks i -> OurSim.new_sim_with_num_decks 1 i
     | StringSpec s -> OurSim.new_sim_with_shoe 1 (OurShoe.shoe_of_string s) in
-  (* TODO: something with sim *)
-  print_string ("approx2h=" ^ string_of_bool approx2h ^ "\n");
-  print_string ("verbose =" ^ string_of_bool verbose ^ "\n");
-  print_string ("repl    =" ^ string_of_bool repl ^ "\n");;
+  let module OurPayoutTable = Payout.Table (OurSim) in
+  OurPayoutTable.print_all stdout sim;;
 
 let cmd =
   let cmdname = "bjsim" in

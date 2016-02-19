@@ -3,6 +3,9 @@ open Hand
 
 type action = Hit | Stand | Double | Split | Surrender
 
+let char_of_action a = match a with
+  | Hit -> 'H' | Stand -> 'S' | Double -> 'D' | Split -> 'P' | Surrender -> 'U'
+
 module type S = sig
   type table_t
   val name : string
