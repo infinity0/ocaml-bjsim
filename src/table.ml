@@ -95,7 +95,7 @@ module Make (Shoe: Shoe.S) :
     else
       let shoe_dist = match co with
         | None -> Shoe.draw t.shoe
-        | Some(c) -> Prob.return (c, Shoe.draw_card c t.shoe) in
+        | Some c -> Prob.return (c, Shoe.draw_card c t.shoe) in
       Prob.map (fun (c, next_shoe) -> {
             t with
             shoe = next_shoe;

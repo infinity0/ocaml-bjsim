@@ -17,7 +17,7 @@ end
 let derive_draw draw_card card_prob = fun d ->
   Prob.map (fun c -> c, draw_card c d) (card_prob d)
 
-let (///) a b = num_of_int(a) // num_of_int(b)
+let (///) a b = num_of_int a // num_of_int b
 
 
 open Reg

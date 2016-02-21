@@ -24,12 +24,12 @@ let _unchecked_dist_of_al checked_dist =
 
 let dist_of_al dist =
   (* ensure non-negative *)
-  let min = (_foldp dist min_num) in
+  let min = _foldp dist min_num in
   if min </ _zero then
     raise (Invalid_probability min)
   else
     (* ensure sum to one *)
-    let sum = (_foldp dist add_num) in
+    let sum = _foldp dist (+/) in
     if sum <>/ _one then
       raise (Invalid_total_probability sum)
     else
@@ -38,27 +38,26 @@ let dist_of_al dist =
       |> filter (fun (v, p) -> p <>/ _zero)
       |> _unchecked_dist_of_al
 
-let al_of_dist m = match m with ProbDist(dist) -> dist
+let al_of_dist m = match m with ProbDist dist -> dist
 
-let fal_of_dist m = map (fun (v, p) -> v, float_of_num(p)) (al_of_dist m)
+let fal_of_dist m = map (fun (v, p) -> v, float_of_num p) (al_of_dist m)
 
 let string_of_dist sexp_of_v m = Sexplib.Sexp.to_string (sexp_of_m sexp_of_v m)
 
 let given pred m =
-  let dist = filter (fun (v, p) -> pred(v)) (al_of_dist m) in
-  let sum = (_foldp dist add_num) in
-  if sum =/ _zero then
-    None
-  else
-    Some (sum, dist_of_al (map (fun (v, p) -> (v, p // sum)) dist))
+  let al = al_of_dist m |> filter (fun (v, p) -> pred v) in
+  let sum = _foldp al (+/) in
+  if sum =/ _zero then None
+  else Some (sum, _unchecked_dist_of_al (map (fun (v, p) -> v, p // sum) al))
 
 let expect_a add mult m =
-  let l = map (fun (v, p) -> mult v p) (al_of_dist m) in
-  fold_left add (hd l) (tl l)
+  let al = al_of_dist m |> map (fun (v, p) -> mult v p) in
+  fold_left add (hd al) (tl al)
 
-let expect f m = expect_a add_num (fun v p -> mult_num (f v) p) m
+let expect f m = expect_a (+/) (fun v p -> (f v) */ p) m
 
-let certain m = let al = al_of_dist m in
+let certain m =
+  let al = al_of_dist m in
   if length al = 1 then Some (fst (hd al)) else None
 
 (* generic monad/structural helpers below *)
@@ -66,17 +65,17 @@ let certain m = let al = al_of_dist m in
 let return v = ProbDist [(v, _one)]
 
 let bind m f =
-  let al_list =
-    map (fun (v0, p0) ->
-        map (fun (v1, p1) -> v1, p1 */ p0)
-          (al_of_dist (f v0)))
-      (al_of_dist m) in
-  _unchecked_dist_of_al (concat al_list)
+  al_of_dist m
+  |> map (fun (v0, p0) ->
+      al_of_dist (f v0)
+      |> map (fun (v1, p1) ->
+          v1, p1 */ p0))
+  |> concat |> _unchecked_dist_of_al
 let (>>=) = bind
 
-let join m = m >>= (fun x -> x)
+let join m = m >>= fun x -> x
 
-let apply fm am = fm >>= (fun f -> am >>= (fun a -> return (f a)))
+let apply fm am = fm >>= fun f -> am >>= fun a -> return (f a)
 let (<*>) = apply
 
 let map f m = al_of_dist m |> map (fun (v, p) -> f v, p) |> _unchecked_dist_of_al
@@ -84,11 +83,10 @@ let map f m = al_of_dist m |> map (fun (v, p) -> f v, p) |> _unchecked_dist_of_a
 let (<$>) = map
 
 let filter pred m =
-  snd (BatOption.get_exn (given pred m)
-         (Invalid_total_probability _zero))
+  snd (BatOption.get_exn (given pred m) (Invalid_total_probability _zero))
 
-let exists pred m = m |> al_of_dist |> List.map fst |> exists pred
+let exists pred m = al_of_dist m |> List.map fst |> exists pred
 (* equiv but slower: match certain (map pred m) with Some false -> false | _ -> true *)
 
-let for_all pred m = m |> al_of_dist |> List.map fst |> for_all pred
+let for_all pred m = al_of_dist m |> List.map fst |> for_all pred
 (* equiv but slower: match certain (map pred m) with Some true -> true | _ -> false *)

@@ -59,7 +59,7 @@ module BJ (Table : Table.S) : S with type table_t = Table.t = struct
   let default_num_decks = 8
 
   let pay h p = pay_base h p
-  include HouseHitA17(Table)
+  include HouseHitA17 (Table)
 end
 let all = reg_add all "BJ" (module BJ)
 
@@ -73,7 +73,7 @@ module BJS (Table : Table.S) : S with type table_t = Table.t = struct
 
   let _house_push_22 h = if is_22 h then _zero else _one
   let pay h p = pay_base ~nat_payout:_one ~house_bust:_house_push_22 h p
-  include HouseHitA17(Table)
+  include HouseHitA17 (Table)
 end
 let all = reg_add all "BJS" (module BJS)
 
@@ -86,7 +86,7 @@ module BJV (Table : Table.S) : S with type table_t = Table.t = struct
   let default_num_decks = 2
 
   let pay h p = pay_base ~nat_payout:_one h p
-  include HouseStandA17(Table)
+  include HouseStandA17 (Table)
 end
 let all = reg_add all "BJV" (module BJV)
 

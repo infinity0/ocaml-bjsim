@@ -87,7 +87,7 @@ struct
     else
       let co, rest = match cards with
         | [] -> None, []
-        | c :: rest -> Some(c), rest in
+        | c :: rest -> Some c, rest in
       m >>= hit co |> map next_turn |> _do_deal_until_complete rest
 
   let deal_next_game cards m =
@@ -101,6 +101,6 @@ module Make2
   S with type shoe_t = Shoe.t
      and type t = Shoe.t Table.default_t =
 struct
-  module DTable = Table.Make(Shoe)
-  include Make (MakeRule(DTable)) (DTable) (Shoe)
+  module DTable = Table.Make (Shoe)
+  include Make (MakeRule (DTable)) (DTable) (Shoe)
 end
