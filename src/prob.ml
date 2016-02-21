@@ -13,7 +13,14 @@ let _one = num_of_int 1
 
 let _foldp dist f = fold_left f _zero (map snd dist)
 
-let _ht2al tbl = BatHashtbl.fold (fun k v l -> (k, v) :: l) tbl []
+let _unchecked_dist_of_al checked_dist =
+  let open BatHashtbl in
+  checked_dist
+  |> fold_left (fun t (v, p) ->
+      modify_def _zero v ((+/) p) t; t
+    ) (create (List.length checked_dist))
+  |> fold (fun k v l -> (k, v) :: l)
+  |> fun fold_th -> ProbDist (fold_th [])
 
 let dist_of_al dist =
   (* ensure non-negative *)
@@ -27,12 +34,9 @@ let dist_of_al dist =
       raise (Invalid_total_probability sum)
     else
       (* filter out zero-probability events *)
-      let ddist = filter (fun (v, p) -> p <>/ _zero) dist in
-      let tbl =
-        fold_left (fun t (v, p) ->
-            BatHashtbl.modify_def _zero v (add_num p) t; t
-          ) (BatHashtbl.create (length dist)) ddist in
-      ProbDist (_ht2al tbl)
+      dist
+      |> filter (fun (v, p) -> p <>/ _zero)
+      |> _unchecked_dist_of_al
 
 let al_of_dist m = match m with ProbDist(dist) -> dist
 
@@ -59,7 +63,7 @@ let certain m = let al = al_of_dist m in
 
 (* generic monad/structural helpers below *)
 
-let return v = dist_of_al [(v, _one)]
+let return v = ProbDist [(v, _one)]
 
 let bind m f =
   let al_list =
@@ -67,7 +71,7 @@ let bind m f =
         map (fun (v1, p1) -> v1, p1 */ p0)
           (al_of_dist (f v0)))
       (al_of_dist m) in
-  dist_of_al (concat al_list)
+  _unchecked_dist_of_al (concat al_list)
 let (>>=) = bind
 
 let join m = m >>= (fun x -> x)
@@ -75,7 +79,8 @@ let join m = m >>= (fun x -> x)
 let apply fm am = fm >>= (fun f -> am >>= (fun a -> return (f a)))
 let (<*>) = apply
 
-let map f m = m >>= (fun v -> return (f v))
+let map f m = al_of_dist m |> map (fun (v, p) -> f v, p) |> _unchecked_dist_of_al
+(* more general but slower: m >>= fun v -> return (f v) *)
 let (<$>) = map
 
 let filter pred m =
