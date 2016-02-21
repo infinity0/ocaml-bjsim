@@ -33,11 +33,11 @@ val string_of_dist : ('a -> Sexplib.Sexp.t) -> 'a m -> string
 (**
  * Condition a distribution on the given filter predicate.
  *
- * Returns [Some (p, d)] where [p] is the proportion of [m]'s event space that
- * matched, and [d] is the resulting (normalised) distribution; or [None] if the
- * filter predicate matched no events.
+ * Returns [Some d, p] where [p] is the proportion of [m]'s event space that
+ * matched, and [d] is the resulting (normalised) distribution; or [None, 0] if
+ * the filter predicate matched no events.
 *)
-val given : ('a -> bool) -> 'a m -> (num * 'a m) option
+val given : ('a -> bool) -> 'a m -> 'a m option * num
 
 (**
  * Calculate an expected value for this distribution, generically.

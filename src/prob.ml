@@ -47,8 +47,10 @@ let string_of_dist sexp_of_v m = Sexplib.Sexp.to_string (sexp_of_m sexp_of_v m)
 let given pred m =
   let al = al_of_dist m |> filter (fun (v, p) -> pred v) in
   let sum = _foldp al (+/) in
-  if sum =/ _zero then None
-  else Some (sum, _unchecked_dist_of_al (map (fun (v, p) -> v, p // sum) al))
+  let dist_opt =
+    if sum =/ _zero then None
+    else Some (al |> map (fun (v, p) -> v, p // sum) |> _unchecked_dist_of_al) in
+  dist_opt, sum
 
 let expect_a add mult m =
   let al = al_of_dist m |> map (fun (v, p) -> mult v p) in
@@ -83,7 +85,7 @@ let map f m = al_of_dist m |> map (fun (v, p) -> f v, p) |> _unchecked_dist_of_a
 let (<$>) = map
 
 let filter pred m =
-  snd (BatOption.get_exn (given pred m) (Invalid_total_probability _zero))
+  BatOption.get_exn (fst (given pred m)) (Invalid_total_probability _zero)
 
 let exists pred m = al_of_dist m |> List.map fst |> exists pred
 (* equiv but slower: match certain (map pred m) with Some false -> false | _ -> true *)
