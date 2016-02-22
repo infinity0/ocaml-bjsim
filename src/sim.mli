@@ -48,6 +48,8 @@ module type S = sig
   *)
   val payout_of_player : (hand -> hand -> num) -> int -> m -> num
 
+  val check_current_player : int -> m -> m
+
   (**
    * Execute a single player's turn. Execution ends after all possible games
    * (over the distribution of cards dealt) have finished that player's turn.

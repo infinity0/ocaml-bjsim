@@ -12,6 +12,7 @@ module type S = sig
   val new_sim_with_num_decks : int -> int -> m
   val new_sim : m Lazy.t
   val payout_of_player :(hand -> hand -> num) -> int -> m -> num
+  val check_current_player : int -> m -> m
   val exec_turn : (int -> t -> m) -> m -> m
   val exec_round : (int -> t -> m) -> m -> m
   val deal_next_game : card list -> m -> m
@@ -61,7 +62,7 @@ struct
              else raise (Invalid_argument "strat advanced to next player"))
       |> map next_turn (* already checked by _do_strat_until_finished *)
 
-  let _get_player_for_exec m =
+  let _get_certain_player m =
     if not @@ for_all is_deal_complete m then
       raise (Invalid_argument "cards are not all dealt")
     else
@@ -69,12 +70,15 @@ struct
       | None -> raise (Invalid_argument "not all on same player's turn")
       | Some player -> player
 
+  let check_current_player player m =
+    assert (_get_certain_player m == player); m
+
   let exec_turn strat_of_player m =
-    let player = _get_player_for_exec m in
+    let player = _get_certain_player m in
     m |> _exec_turn strat_of_player player
 
   let rec exec_round strat_of_player m =
-    let player = _get_player_for_exec m in
+    let player = _get_certain_player m in
     let next_m = m |> _exec_turn strat_of_player player in
     if player = 0 then next_m (* stop recursing after house turn *)
     else next_m |> exec_round strat_of_player
