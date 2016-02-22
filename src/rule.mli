@@ -7,6 +7,11 @@ type action = Hit | Stand | Double | Split | Surrender
 
 val char_of_action : action -> char
 
+val sexp_of_action : action -> Sexplib.Sexp.t
+
+val action_of_sexp : Sexplib.Sexp.t -> action
+
+
 (** Rules for a particular game variant. *)
 module type S = sig
   (** Type of table used in this game. *)

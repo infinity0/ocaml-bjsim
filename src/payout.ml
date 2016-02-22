@@ -2,6 +2,8 @@ open Hand
 open Num
 open List
 open Printf
+open Sexplib.Std
+open Sexplib_num.Std.Num
 open Sim
 open String
 
@@ -27,7 +29,17 @@ let rjust num char str =
   let s = concat "" [(make num char); str] in
   let l = length s in sub s (l-num) num
 
-let payout_str payouts =
+type payouts_hum = Pay of (char * string) list with sexp
+let string_of_payouts_hum payouts =
+  let payouts = map (fun (a, p) -> Rule.char_of_action a, approx_num_fix 8 p) payouts in
+  Sexplib.Sexp.to_string (sexp_of_payouts_hum (Pay payouts))
+
+type payouts_mach = Pay of (Rule.action * num) list with sexp
+let string_of_payouts_mach payouts =
+  Sexplib.Sexp.to_string (sexp_of_payouts_mach (Pay payouts))
+
+let string_of_payouts = string_of_payouts_hum
+
 let pretty_of_payouts payouts =
   let open Rule in
   let pay2 = match payouts with
@@ -96,6 +108,14 @@ module Table (Sim: Sim.S) = struct
     [pay_u; pay_s; pay_h; pay_d; pay_p]
     |> List.concat
     |> sort (fun pay0 pay1 -> - compare_num (snd pay0) (snd pay1))
+
+  let print_payout fp m0 card_list =
+    let p0, hc0 = match card_list with
+      | [pc0; hc0; pc1] -> new_hand ++ pc0 ++ pc1, hc0
+      | _ -> failwith "not implemented" in
+    print_endline (
+      string_of_hand p0 ^ " vs House " ^ make 1 (char_of_card hc0) ^ ": " ^
+      string_of_payouts (payout_of_hands m0 card_list))
 
   let print_row fp m0 pc0 pc1 =
     let row_hd = BatString.of_list [char_of_card pc0; char_of_card pc1] in
