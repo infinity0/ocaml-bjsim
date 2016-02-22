@@ -57,7 +57,7 @@ struct
            else let m = (strat_of_player player) t in
              if for_all (fun t -> current_player t == player) m then m
              else raise (Invalid_argument "strat advanced to next player"))
-      |> map next_turn (* already checked by _do_strat_until_finished *)
+      <&> next_turn (* already checked by _do_strat_until_finished *)
 
   let _get_certain_player m =
     if not @@ for_all is_deal_complete m then
@@ -89,10 +89,10 @@ struct
       let co, rest = match cards with
         | [] -> None, []
         | c :: rest -> Some c, rest in
-      m >>= hit co |> map next_turn |> _do_deal_until_complete rest
+      m >>= hit co <&> next_turn |> _do_deal_until_complete rest
 
   let deal_next_game cards m =
-    m |> map next_game |> _do_deal_until_complete cards
+    m <&> next_game |> _do_deal_until_complete cards
 
 end
 

@@ -83,6 +83,7 @@ let (<*>) = apply
 let map f m = al_of_dist m |> map (fun (v, p) -> f v, p) |> _unchecked_dist_of_al
 (* more general but slower: m >>= fun v -> return (f v) *)
 let (<$>) = map
+let (<&>) m f = m |> map f
 
 let filter pred m =
   BatOption.get_exn (fst (given pred m)) (Invalid_total_probability _zero)

@@ -80,17 +80,19 @@ include BatInterfaces.Monad
  * http://hsenag.livejournal.com/11803.html?nojs=1
 *)
 
-(** Alias for Monad.bind. *)
+(** Alias for [Monad.bind]. *)
 val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
 val join : 'a m m -> 'a m
 
 val apply : ('a -> 'b) m -> 'a m -> 'b m
-(** Alias for Applicative.join. *)
+(** Alias for [Applicative.join]. *)
 val (<*>) : ('a -> 'b) m -> 'a m -> 'b m
 
 val map : ('a -> 'b) -> 'a m -> 'b m
-(** Alias for Functor.map. *)
+(** Alias for [Functor.map]. *)
 val (<$>) : ('a -> 'b) -> 'a m -> 'b m
+(** Alias for flipped [Functor.map]. *)
+val (<&>) : 'a m -> ('a -> 'b) -> 'b m
 
 (* other common utils *)
 
