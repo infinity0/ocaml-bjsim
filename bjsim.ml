@@ -54,16 +54,18 @@ let bjsim_main
     (repl:bool)
     (hands:card list list) =
   let module OurShoe = (val shoe_model) in
-  let module MakeOurRule = (val rule) in
-  let module OurSim = Sim.Make2 (MakeOurRule) (OurShoe) in
-  let sim = match shoe_spec with
-    | DefaultNumDecks -> Lazy.force OurSim.new_sim
-    | NumDecks i -> OurSim.new_sim_with_num_decks 1 i
-    | StringSpec s -> OurSim.new_sim_with_shoe 1 (OurShoe.shoe_of_string s) in
+  let module OurRuleMake = (val rule) in
+  let module OurSim = Sim.Make2 (OurRuleMake) (OurShoe) in
+  let shoe_model_name = BatOption.get_exn (Shoe.to_name shoe_model) Not_found in
+  let shoe0 = match shoe_spec with
+    | DefaultNumDecks -> OurSim.new_shoe_default
+    | NumDecks i -> OurShoe.new_shoe i
+    | StringSpec s -> OurShoe.shoe_of_string s in
   let module OurPayoutTable = Payout.Table (OurSim) in
+  let sim0 = OurPayoutTable.print_and_init_sim stdout shoe0 shoe_model_name in
   match hands with
-  | [] -> OurPayoutTable.print_all stdout sim
-  | _ -> List.iter (OurPayoutTable.print_payout stdout sim) hands;;
+  | [] -> OurPayoutTable.print_all stdout sim0
+  | _ -> List.iter (OurPayoutTable.print_payout stdout sim0) hands;;
 
 let cmd =
   let cmdname = "bjsim" in

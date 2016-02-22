@@ -89,7 +89,7 @@ module RealShoe = struct
 
   let draw = derive_draw draw_card card_prob
 
-  let string_of_shoe d = Sexplib.Sexp.to_string (sexp_of_t d)
+  let string_of_shoe d = Sexplib.Sexp.to_string_hum (sexp_of_t d)
 
   let shoe_of_string s = check_t (t_of_sexp (Sexplib.Sexp.of_string s))
 end

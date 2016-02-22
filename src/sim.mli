@@ -19,25 +19,22 @@ module type S = sig
 
   module Table : Table.S with type t = t
 
-  (**
-   * Start a new simulation on a new table, with a particular shoe.
-   *
-   * The first argument is the number of players.
-  *)
-  val new_sim_with_shoe : int -> shoe_t -> m
+  module Shoe : Shoe.S with type t = shoe_t
 
   (**
-   * Start a new simulation on a new table, with a given number of decks.
+   * Create a new shoe with the default number of decks for the rule in play.
    *
-   * The first argument is the number of players.
+   * For more ways to create a custom shoe, see the {!Shoe} submodule.
   *)
-  val new_sim_with_num_decks : int -> int -> m
+  val new_shoe_default : shoe_t
 
   (**
-   * Start a new simulation on a new table, with the house and one player,
-   * and with the default number of decks for the rule in play.
+   * Start a new simulation on a new table.
+   *
+   * The first argument is the number of players, the second argument is the
+   * shoe to start the simulation with.
   *)
-  val new_sim : m Lazy.t
+  val new_sim : int -> shoe_t -> m
 
   (**
    * Calculate the expected payout by the house for a given player.

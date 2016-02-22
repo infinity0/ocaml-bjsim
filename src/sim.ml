@@ -8,9 +8,9 @@ module type S = sig
   type m = t Prob.m
   module Rule : Rule.S with type table_t = t
   module Table : Table.S with type t = t
-  val new_sim_with_shoe : int -> shoe_t -> m
-  val new_sim_with_num_decks : int -> int -> m
-  val new_sim : m Lazy.t
+  module Shoe : Shoe.S with type t = shoe_t
+  val new_shoe_default : shoe_t
+  val new_sim : int -> shoe_t -> m
   val payout_of_player :(hand -> hand -> num) -> int -> m -> num
   val check_current_player : int -> m -> m
   val exec_turn : (int -> t -> m) -> m -> m
@@ -33,14 +33,11 @@ struct
 
   module Rule = Rule
   module Table = Table
+  module Shoe = Shoe
 
-  let new_sim_with_shoe players shoe =
-    return (new_table players shoe)
+  let new_shoe_default = Shoe.new_shoe Rule.default_num_decks
 
-  let new_sim_with_num_decks players num_decks =
-    new_sim_with_shoe players (Shoe.new_shoe num_decks)
-
-  let new_sim = lazy (new_sim_with_shoe 1 (Shoe.new_shoe Rule.default_num_decks))
+  let new_sim players shoe = return (new_table players shoe)
 
   let payout_of_player f player m =
     expect (fun gs -> f (hand_of_house gs) (hand_of_player player gs)) m

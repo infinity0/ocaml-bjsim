@@ -15,7 +15,7 @@ let tc_basic ctx =
     | _ -> Prob.return (TestSim.Table.finish_turn t) in
   let open TestSim in
   let payout_of cards =
-    Lazy.force new_sim
+    new_sim 1 new_shoe_default
     |> deal_next_game (List.map card_of_int cards)
     |> exec_round strat_stand_all
     |> payout_of_player TestSim.Rule.pay 1 in

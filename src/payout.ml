@@ -110,6 +110,12 @@ module Table (Sim: Sim.S) = struct
     |> List.concat
     |> sort (fun pay0 pay1 -> - compare_num (snd pay0) (snd pay1))
 
+  let print_and_init_sim fp shoe0 shoe_model =
+    let open Sim in
+    let m0 = new_sim 1 shoe0 in
+    print_endline (Rule.name ^ "; initial card state: " ^ shoe_model ^ " " ^ (Shoe.string_of_shoe shoe0));
+    m0
+
   let print_payout fp m0 card_list =
     let p0, hc0 = match card_list with
       | [pc0; hc0; pc1] -> new_hand ++ pc0 ++ pc1, hc0
