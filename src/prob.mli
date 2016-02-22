@@ -97,3 +97,8 @@ val (<$>) : ('a -> 'b) -> 'a m -> 'b m
 val filter : ('a -> bool) -> 'a m -> 'a m
 val exists : ('a -> bool) -> 'a m -> bool
 val for_all : ('a -> bool) -> 'a m -> bool
+
+(**
+ * A faster version of [certain (map f m)].
+ *)
+val map_certain : ('a -> 'b) -> 'a m -> 'b option

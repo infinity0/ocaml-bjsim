@@ -63,7 +63,7 @@ struct
     if not @@ for_all is_deal_complete m then
       raise (Invalid_argument "cards are not all dealt")
     else
-      match certain (map current_player m) with
+      match map_certain current_player m with
       | None -> raise (Invalid_argument "not all on same player's turn")
       | Some player -> player
 

@@ -92,3 +92,8 @@ let exists pred m = al_of_dist m |> List.map fst |> exists pred
 
 let for_all pred m = al_of_dist m |> List.map fst |> for_all pred
 (* equiv but slower: match certain (map pred m) with Some true -> true | _ -> false *)
+
+let map_certain f m =
+  let al = al_of_dist m in
+  let r = f (fst (hd al)) in
+  if List.for_all (fun (v, p) -> f v = r) (tl al) then Some r else None

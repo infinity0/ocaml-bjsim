@@ -75,7 +75,7 @@ module Table (Sim: Sim.S) = struct
     let open Sim in
     m
     |> Prob.map Table.next_turn (* yes, unconditionally finish the turn *)
-    |> check_current_player 0
+    (* |> check_current_player 0 *)
     |> exec_round (fun p -> assert (p = 0); Rule.house_play)
     |> payout_of_player Rule.pay 1
 
@@ -87,7 +87,7 @@ module Table (Sim: Sim.S) = struct
       | [pc0; hc0] -> new_hand ++ pc0, new_hand ++ hc0, true
       | [pc0; hc0; pc1] -> new_hand ++ pc0 ++ pc1, new_hand ++ hc0, pc0 <> pc1
       | _ -> failwith "not implemented" in
-    let m1 = m0 |> deal_next_game card_list |> check_current_player 1 in
+    let m1 = m0 |> deal_next_game card_list (* |> check_current_player 1 *) in
     let maybe_play a f = if not @@ mem a Rule.actions then [] else match f () with
         | None -> []
         | Some p -> [(a, p)] in
