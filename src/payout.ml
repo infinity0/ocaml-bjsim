@@ -61,7 +61,20 @@ let pretty_of_payouts payouts =
     if abs_num ((snd p0) -/ (snd p1)) <=/ eps then text
     else colorit p0
 
-module Table (Sim: Sim.S) = struct
+
+module type TableS = sig
+  module Sim : Sim.S
+  val payout_of_hands : Sim.m -> card list -> (Rule.action * num) list
+  val print_and_init_sim : 'a -> Sim.Shoe.t -> string -> Sim.m
+  val print_payout : 'a -> Sim.m -> card list -> unit
+  val print_row : out_channel -> Sim.m -> card -> card -> unit
+  val print_all : out_channel -> Sim.m -> unit
+end
+
+module Table (Sim: Sim.S) : TableS
+  with type Sim.shoe_t = Sim.shoe_t
+   and type Sim.t = Sim.t = struct
+  module Sim = Sim
   let cols = [2;3;4;5;6;7;8;9;10;1]
   let col_div = " | "
   let row_div = concat "-+-" ("--" :: (map (fun _ -> make 13 '-') cols))
@@ -145,5 +158,4 @@ module Table (Sim: Sim.S) = struct
     iter (print_row 2) [9;8;7;6;5;4;3];
     print_endline row_div;
     iter (fun pc0 -> print_row pc0 pc0) [1;10;9;8;7;6;5;4;3;2];;
-
 end

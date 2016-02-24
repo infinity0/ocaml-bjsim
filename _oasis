@@ -30,9 +30,13 @@ Executable bjsim
   Install: true
   MainIs: bjsim.ml
   CompiledObject: best
-  BuildDepends: batteries, bjsim, cmdliner
-  ByteOpt: -thread
-  NativeOpt: -thread
+  BuildDepends: batteries, bjsim, cmdliner, utop
+  # TODO: oasis in the future will support ocamlmktop targets, then some of
+  # these flags won't be necessary. we then can also add a bjsim.mltop file to
+  # have those modules automatically loaded in the repl when it starts.
+  ByteOpt: -thread -linkall -predicates create_toploop -package compiler-libs.toplevel
+  # TODO: this is of course a massive hack; use ppx instead
+  NativeOpt: -thread -pp "sed -e '/{{BYTECODE_ONLY{{/,/}}BYTECODE_ONLY}}/d'"
 
 Executable "ounit_test"
   Build$: flag(tests)

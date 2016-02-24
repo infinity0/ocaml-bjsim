@@ -63,9 +63,37 @@ let bjsim_main
     | StringSpec s -> OurShoe.shoe_of_string s in
   let module OurPayoutTable = Payout.Table (OurSim) in
   let sim0 = OurPayoutTable.print_and_init_sim stdout shoe0 shoe_model_name in
-  match hands with
+  let _ = match hands with
   | [] -> OurPayoutTable.print_all stdout sim0
-  | _ -> List.iter (OurPayoutTable.print_payout stdout sim0) hands;;
+  | _ -> List.iter (OurPayoutTable.print_payout stdout sim0) hands in
+  let do_repl () =
+    (* {{BYTECODE_ONLY{{ *)
+    (* OCaml Toplevel reads Sys.argv unconditionally, hack around it *)
+    Array.fill Sys.argv 0 (Array.length Sys.argv) "-principal";
+    (* The below could be tidier, it's WIP for utop
+     * see https://github.com/diml/utop/issues/158 *)
+    let open UTop_main in interact
+      ~search_path:["_build";"_build/src"]
+      ~unit:__MODULE__
+      ~loc:__POS__
+      ~values:[
+        V ("OurShoe", (module OurShoe: Shoe.S));
+        V ("OurRuleMake", (module OurRuleMake: Rule.MakeS));
+        V ("shoe_spec", shoe_spec);
+        V ("approx2h", approx2h);
+        V ("verbose", verbose);
+        V ("repl", repl);
+        V ("hands", hands);
+        V ("shoe_model_name", shoe_model_name);
+        V ("OurSim", (module OurSim: Sim.S));
+        V ("OurPayoutTable", (module OurPayoutTable: Payout.TableS));
+        V ("shoe0", shoe0);
+        V ("sim0", sim0);
+      ];
+    if false then
+    (* }}BYTECODE_ONLY}} *)
+    failwith "REPL is not available in the native binary" in
+  if repl then do_repl ();;
 
 let cmd =
   let cmdname = "bjsim" in
