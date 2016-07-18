@@ -50,7 +50,7 @@ module RealShoe = struct
   type t = {
     num_decks: int;
     num_dealt: int list;
-  } with sexp
+  } [@@deriving sexp]
 
   let cards_dealt d = all_cards
                       |> map (fun c -> num_per_deck c * d.num_decks)

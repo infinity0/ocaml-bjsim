@@ -2,7 +2,7 @@ open Num
 open Hand
 open Sexplib.Std
 
-type action = Hit | Stand | Double | Split | Surrender with sexp
+type action = Hit | Stand | Double | Split | Surrender [@@deriving sexp]
 
 let char_of_action a = match a with
   | Hit -> 'H' | Stand -> 'S' | Double -> 'D' | Split -> 'P' | Surrender -> 'U'

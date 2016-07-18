@@ -23,7 +23,7 @@ SourceRepository master
 Library bjsim
   Path: src
   Modules: Hand, Payout, Prob, Reg, Rule, Shoe, Sim, Table
-  BuildDepends: batteries, sexplib.syntax, sexplib_num
+  BuildDepends: batteries, ppx_sexp_conv, sexplib.num
 
 Executable bjsim
   Path: .

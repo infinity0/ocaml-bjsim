@@ -29,12 +29,12 @@ let rjust num char str =
   let s = concat "" [(make num char); str] in
   let l = length s in sub s (l-num) num
 
-type payouts_hum = Pay of (char * string) list with sexp
+type payouts_hum = Pay of (char * string) list [@@deriving sexp]
 let string_of_payouts_hum payouts =
   let payouts = map (fun (a, p) -> Rule.char_of_action a, approx_num_fix 8 p) payouts in
   Sexplib.Sexp.to_string (sexp_of_payouts_hum (Pay payouts))
 
-type payouts_mach = Pay of (Rule.action * num) list with sexp
+type payouts_mach = Pay of (Rule.action * num) list [@@deriving sexp]
 let string_of_payouts_mach payouts =
   Sexplib.Sexp.to_string (sexp_of_payouts_mach (Pay payouts))
 
