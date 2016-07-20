@@ -11,6 +11,7 @@ License:        GPL-3+
 Plugins:        META (0.4), DevFiles (0.4)
 BuildTools:     ocamlbuild
 AlphaFeatures:  ocamlbuild_more_args
+XOCamlbuildPluginTags: package(ppx_driver.ocamlbuild)
 Description:
   Example code for using different OCaml packaging tools.
 
@@ -30,7 +31,7 @@ Executable bjsim
   Install: true
   MainIs: bjsim.ml
   CompiledObject: best
-  BuildDepends: batteries, bjsim, cmdliner, utop
+  BuildDepends: batteries, bjsim, cmdliner
   # TODO: oasis in the future will support ocamlmktop targets, then some of
   # these flags won't be necessary. we then can also add a bjsim.mltop file to
   # have those modules automatically loaded in the repl when it starts.

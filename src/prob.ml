@@ -5,8 +5,8 @@ open Sexplib_num.Std.Num
 
 type 'a m = ProbDist of ('a * num) list [@@deriving sexp]
 
-exception Invalid_probability of num
-exception Invalid_total_probability of num
+exception Invalid_probability of num [@@deriving sexp]
+exception Invalid_total_probability of num [@@deriving sexp]
 
 let _zero = num_of_int 0
 let _one = num_of_int 1

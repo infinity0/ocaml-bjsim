@@ -1,0 +1,4 @@
+<**/*>: predicate(custom_ppx),ppx-driver(ppx_sexp_conv)
+"src" or "test": include
+# OASIS_START
+# OASIS_STOP

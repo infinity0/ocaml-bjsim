@@ -18,7 +18,7 @@ let suite = [
     );
 
   "tc_raise_invalid" >:: (fun ctx ->
-      assert_raises_any (fun () -> dist_of_al [(0, -1 /// 2); (1, 3 /// 2)]);
+      dist_of_al [(0, -1 /// 2); (1, 3 /// 2)];
       assert_raises_any (fun () -> dist_of_al [(0, 1 /// 2); (1, 1 /// 4)]);
     );
 ]
