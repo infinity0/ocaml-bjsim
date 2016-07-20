@@ -2,9 +2,7 @@ open OUnit2
 open Prob
 open Num
 
-let assert_raises_any f = try
-    f(); raise (Failure "succeeded unexpectedly")
-  with | _ -> ()
+let assert_raises_any f = assert (try (f (); false) with _ -> true)
 
 let (///) a b = num_of_int a // num_of_int b
 
